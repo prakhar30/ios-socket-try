@@ -15,13 +15,13 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = UIColor.green
         UNUserNotificationCenter.current().delegate = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         setupSocketConnection()
-//        sendNotifications()
     }
     
     func setupSocketConnection() {
@@ -34,7 +34,7 @@ class ViewController: UIViewController {
     func receiveMessages() {
         webSocketTask?.receive { result in
             switch result {
-            case .failure(let _):
+            case .failure:
                 print("Error")
             case .success(let message):
                 switch message {
@@ -42,9 +42,14 @@ class ViewController: UIViewController {
                     print("Received string: \(text)")
                     if text == "DANGER" {
                         DispatchQueue.main.async {
+                            self.view.backgroundColor = UIColor.red
                             if !self.notificationSent {
                                 self.sendNotifications()
                             }
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self.view.backgroundColor = UIColor.green
                         }
                     }
                 case .data(let data):
