@@ -10,6 +10,8 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    var webSocketTask: URLSessionWebSocketTask?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -22,13 +24,13 @@ class ViewController: UIViewController {
     
     func setupSocketConnection() {
         let urlSession = URLSession(configuration: .default)
-        let webSocketTask = urlSession.webSocketTask(with: URL(string: "ws://127.0.0.1:5678/")!)
-        webSocketTask.resume()
-        self.receiveMessages(webSocketTask: webSocketTask)
+        webSocketTask = urlSession.webSocketTask(with: URL(string: "ws://127.0.0.1:5678/")!)
+        webSocketTask?.resume()
+        self.receiveMessages()
     }
     
-    func receiveMessages(webSocketTask: URLSessionWebSocketTask) {
-        webSocketTask.receive { result in
+    func receiveMessages() {
+        webSocketTask?.receive { result in
           switch result {
           case .failure(let error):
             print("Error in receiving message: \(error)")
@@ -42,7 +44,7 @@ class ViewController: UIViewController {
                 print("Unknown case")
             }
           }
-            self.receiveMessages(webSocketTask: webSocketTask)
+            self.receiveMessages()
         }
     }
 }
